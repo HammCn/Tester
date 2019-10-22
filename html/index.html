@@ -686,7 +686,16 @@
         var fs = require('fs'); // 引入fs模块
         var FormData = require('form-data');
         const fetch = require('node-fetch');
-        const configPath = (process.env.OS == "Windows_NT" ? process.env.APPDATA : process.env.Home) + '/TesterData';
+        var configPath = "";
+        switch (process.platform) {
+            case 'darwin':
+                configPath = process.env.HOME + '/TesterData';
+                break;
+            case 'win32':
+                configPath = process.env.APPDATA + '/TesterData';
+                break;
+            default:
+        }
         var initData = {
             url: "https://hamm.cn/test/post",
             isPost: true, //使用POST请求
@@ -1087,7 +1096,7 @@
             }
 
             markdown += "### 五、请求返回示例结果\n\n";
-            markdown += "```\n" + responseBody + "\n```\n\n";
+            markdown += "```\n" + $("pre").text() + "\n```\n\n";
             markdown += "### 六、返回结果字段说明\n\n";
             markdown += "|字段名称 |数据类型 |固定返回 |示例值 |字段说明 |\n";
             markdown += "|:----:|:----:|:----:|:----:|:----:|\n";
