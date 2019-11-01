@@ -920,12 +920,13 @@
             }
             VUE_APP.response.statusCode = response.statusCode;
             VUE_APP.response.statusMessage = response.statusMessage;
-            if (response.headers['content-type'].indexOf('application/json') >= 0) {
-                //is json data
+            
+            try{
                 VUE_APP.response.isJson = true;
                 responseBody = unescape(body);
                 VUE_APP.response.body = unescape(JsonFormat(JSON.parse(body)));
-            } else {
+            }catch(e){
+                //JSON解析失败 按常规数据解析
                 VUE_APP.response.isJson = false;
                 responseBody = body;
                 VUE_APP.response.body = response.body;
@@ -986,10 +987,6 @@
                 }
             }
 
-            console.log(headers);
-            console.log(cookies);
-            console.log(data);
-            console.log(typeof (data));
             if (headers['content-type'] != 'multipart/form-data') {
                 //可能会有这些问题
                 if (typeof (data) == 'object') {
@@ -1095,7 +1092,7 @@
                 }
             }
 
-            markdown += "### 五、请求返回示例结果\n\n";
+            markdown += "\n### 五、请求返回示例结果\n\n";
             markdown += "```\n" + $("pre").text() + "\n```\n\n";
             markdown += "### 六、返回结果字段说明\n\n";
             markdown += "|字段名称 |数据类型 |固定返回 |示例值 |字段说明 |\n";
