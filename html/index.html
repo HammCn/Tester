@@ -1061,7 +1061,7 @@
             markdown += "### 四、请求参数\n\n";
             markdown += "#### GET参数\n\n";
             markdown += "|参数名称 |数据类型 |是否必填 |示例值 |参数说明 |\n";
-            markdown += "|:----:|:----:|:----:|:----:|:----:|\n";
+            markdown += "|:----|:----|:----|:----|:----|\n";
             if (gets.length > 1) {
                 gets = gets[1];
             } else {
@@ -1074,7 +1074,7 @@
             }
             markdown += "\n#### POST参数\n\n";
             markdown += "|参数名称 |数据类型 |是否必填 |示例值 |参数说明 |\n";
-            markdown += "|:----:|:----:|:----:|:----:|:----:|\n";
+            markdown += "|:----|:----|:----|:----|:----|\n";
             console.log(VUE_APP.current);
             if (VUE_APP.current.isPostKv) {
                 for (var i = 0; i < VUE_APP.current.posts.length; i++) {
@@ -1096,7 +1096,7 @@
             markdown += "```\n" + $("pre").text() + "\n```\n\n";
             markdown += "### 六、返回结果字段说明\n\n";
             markdown += "|字段名称 |数据类型 |固定返回 |示例值 |字段说明 |\n";
-            markdown += "|:----:|:----:|:----:|:----:|:----:|\n";
+            markdown += "|:----|:----|:----|:----|:----|\n";
             var _obj = {};
             try {
                 _obj = JSON.parse(responseBody);
