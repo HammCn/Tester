@@ -19,6 +19,9 @@ Tester，一款跨平台的HTTP请求测试工具，支持自定义Header，Cook
 如果你不喜欢，额~
 ```
 
+#### 源码依赖
+本项目依赖 ```NodeJS``` ```npm``` ```electron``` 等。
+
 #### 源码运行
 ```
 npm install && npm start
