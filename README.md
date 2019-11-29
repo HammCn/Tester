@@ -8,7 +8,7 @@
 
 
 #### 介绍
-Tester，一款跨平台的HTTP请求测试工具，支持自定义Header，Cookies，参数等，支持快速生成API测试的Markdown文档，是一个轻量级的API测试工具。
+Tester，一款跨平台的HTTP请求测试工具，支持自定义Header、Cookies、参数等，支持快速生成API测试的Markdown文档，支持上传文件，支持请求历史记录保存等。是一个轻量级的API测试工具。
 
 ```
 为什么要写这么个狗东西？
