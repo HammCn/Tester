@@ -1,25 +1,17 @@
 ![Tester](https://images.gitee.com/uploads/images/2019/1204/010544_60e36e4d_145025.png "Tester")
-<p>
 
 ---
 
 # Tester
-<a href="https://hamm.cn" target="_blank">
-<img src="https://static.hamm.cn/svg/hamm.svg">
-</a>
-<a href="https://gitee.com/hamm/tester">
-<img src="https://static.hamm.cn/svg/gitee.svg">
-</a>
-<a href="https://gitee.com/hamm/tester">
-<img src="https://static.hamm.cn/svg/tuijian.svg">
-</a>
 <a href="https://gitee.com/hamm/tester/stargazers">
 <img src="https://gitee.com/hamm/tester/badge/star.svg?theme=gray">
 </a>
 <a href="https://gitee.com/hamm/tester/members">
 <img src="https://gitee.com/hamm/tester/badge/fork.svg?theme=gray">
 </a>
-</p>
+<img src="https://svg.hamm.cn/?key=源码依赖&value=Electron">
+<img src="https://svg.hamm.cn/?key=运行时&value=Node">
+<img src="https://svg.hamm.cn/?key=平台&value=Mac OS/Windows">
 
 #### 介绍
 
@@ -58,5 +50,3 @@ npm install && npm start
 2. 新建分支 修改代码
 3. 提交代码
 4. 新建 Pull Request
-
-[![Fork me on Gitee](https://gitee.com/hamm/tester/widgets/widget_3.svg)](https://gitee.com/hamm/tester)
