@@ -1,13 +1,22 @@
-
-# Tester  
-[![star](https://gitee.com/hamm/tester/badge/star.svg?theme=gray)](https://gitee.com/hamm/tester/stargazers)
-[![fork](https://gitee.com/hamm/tester/badge/fork.svg?theme=gray)](https://gitee.com/hamm/tester/members)
-
 ![Tester](https://images.gitee.com/uploads/images/2019/1204/010544_60e36e4d_145025.png "Tester")
 
+---
+
+# Tester
+<a href="https://gitee.com/hamm/tester/stargazers">
+<img src="https://gitee.com/hamm/tester/badge/star.svg?theme=gray">
+</a>
+<a href="https://gitee.com/hamm/tester/members">
+<img src="https://gitee.com/hamm/tester/badge/fork.svg?theme=gray">
+</a>
+<img src="https://svg.hamm.cn/?key=源码依赖&value=Electron">
+<img src="https://svg.hamm.cn/?key=运行时&value=Node">
+<img src="https://svg.hamm.cn/?key=平台&value=Mac OS/Windows">
 
 #### 介绍
+
 Tester，一款跨平台的HTTP请求测试工具，支持自定义Header、Cookies、参数等，支持快速生成API测试的Markdown文档，支持上传文件，支持请求历史记录保存等。是一个轻量级的API测试工具。
+
 
 ```
 为什么要写这么个狗东西？
@@ -41,5 +50,3 @@ npm install && npm start
 2. 新建分支 修改代码
 3. 提交代码
 4. 新建 Pull Request
-
-[![Fork me on Gitee](https://gitee.com/hamm/tester/widgets/widget_3.svg)](https://gitee.com/hamm/tester)
