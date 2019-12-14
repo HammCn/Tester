@@ -1,7 +1,7 @@
 
 # Tester  
-[![star](https://gitee.com/hamm/tester/badge/star.svg?theme=white)](https://gitee.com/hamm/tester/stargazers)
-[![fork](https://gitee.com/hamm/tester/badge/fork.svg?theme=white)](https://gitee.com/hamm/tester/members)
+[![star](https://gitee.com/hamm/tester/badge/star.svg?theme=gray)](https://gitee.com/hamm/tester/stargazers)
+[![fork](https://gitee.com/hamm/tester/badge/fork.svg?theme=gray)](https://gitee.com/hamm/tester/members)
 
 ![Tester](https://images.gitee.com/uploads/images/2019/1204/010544_60e36e4d_145025.png "Tester")
 
