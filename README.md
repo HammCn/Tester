@@ -3,13 +3,11 @@
 ---
 
 # Tester
-<a href="https://gitee.com/hamm/tester/stargazers">
-<img src="https://gitee.com/hamm/tester/badge/star.svg?theme=gray">
-</a>
-<a href="https://gitee.com/hamm/tester/members">
-<img src="https://gitee.com/hamm/tester/badge/fork.svg?theme=gray">
-</a>
-<img src="https://svg.hamm.cn/?key=源码依赖&value=Electron">
+<img src="https://svg.hamm.cn?key=gitee&value=star&project=hamm/tester">
+<img src="https://svg.hamm.cn?key=gitee&value=fork&project=hamm/tester">
+<img src="https://svg.hamm.cn?key=gitee&value=watch&project=hamm/tester">
+<img src="https://svg.hamm.cn?key=gitee&value=commit&project=hamm/tester">
+<img src="https://svg.hamm.cn/?key=依赖&value=Electron">
 <img src="https://svg.hamm.cn/?key=运行时&value=Node">
 <img src="https://svg.hamm.cn/?key=平台&value=Mac OS/Windows">
 
