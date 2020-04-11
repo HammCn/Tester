@@ -3,13 +3,13 @@
 ---
 
 # Tester
-<img src="https://svg.hamm.cn?key=gitee&value=star&project=hamm/tester">
-<img src="https://svg.hamm.cn?key=gitee&value=fork&project=hamm/tester">
-<img src="https://svg.hamm.cn?key=gitee&value=watch&project=hamm/tester">
-<img src="https://svg.hamm.cn?key=gitee&value=commit&project=hamm/tester">
-<img src="https://svg.hamm.cn/?key=依赖&value=Electron">
-<img src="https://svg.hamm.cn/?key=运行时&value=Node">
-<img src="https://svg.hamm.cn/?key=平台&value=Mac OS/Windows">
+<img src="https://svg.hamm.cn/gitee.svg?type=star&user=hamm&project=tester">
+<img src="https://svg.hamm.cn/gitee.svg?type=fork&user=hamm&project=tester">
+<img src="https://svg.hamm.cn/gitee.svg?type=watch&user=hamm&project=tester">
+<img src="https://svg.hamm.cn/gitee.svg?type=commit&user=hamm&project=tester">
+<img src="https://svg.hamm.cn/badge.svg?key=依赖&value=Electron">
+<img src="https://svg.hamm.cn/badge.svg?key=运行时&value=Node">
+<img src="https://svg.hamm.cn/badge.svg?key=平台&value=Mac OS/Windows">
 
 #### 介绍
 
