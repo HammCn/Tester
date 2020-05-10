@@ -97,7 +97,7 @@
                     <a href="/">
                         <img src="/static/images/logo.png" height="80px" />
                     </a>
-                    <el-link type="primary" href="https://gitee.com/hamm/ApiTester" target="_blank" style="float:right;margin-bottom:10px;">开源地址</el-link>
+                    <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank" style="float:right;margin-bottom:10px;">开源地址</el-link>
                 </el-header>
                 <el-main>
                     <div>
