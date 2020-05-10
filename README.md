@@ -2,16 +2,16 @@
     <img src="https://images.gitee.com/uploads/images/2020/0510/163917_eab0d49d_145025.png" width="400px"/>
 </p>
 <p align="center">
-    <a href="https://gitee.com/hamm/ApiTester/stargazers">
+    <a href="https://gitee.com/hamm/tester/stargazers">
         <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=tester&type=star"/>
     </a>
-    <a href="https://gitee.com/hamm/ApiTester/watchers">
+    <a href="https://gitee.com/hamm/tester/watchers">
         <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=tester&type=watch"/>
     </a>
-    <a href="https://gitee.com/hamm/ApiTester/members">
+    <a href="https://gitee.com/hamm/tester/members">
         <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=tester&type=fork"/>
     </a>
-    <a href="https://gitee.com/hamm/ApiTester/commits/master">
+    <a href="https://gitee.com/hamm/tester/commits/master">
         <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=tester&type=commit"/>
     </a>
     <img src="https://svg.hamm.cn/badge.svg?key=UI&value=Element"/>
