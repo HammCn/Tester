@@ -317,7 +317,7 @@
 
                         that.response.markdown = '';
                         that.response.markdown += '## xxx API接口文档\n\n';
-                        that.response.markdown += '> 本文档由 [API Tester](https://at.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
+                        that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
                             '\n\n';
 
                         that.response.markdown += '#### 一、接口说明\n\n';
