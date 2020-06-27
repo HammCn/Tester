@@ -28,8 +28,26 @@
             font-size: 32px;
             color: : #666;
         }
+        .no-select * {
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            user-select:none;
+        }
         .el-select .el-input {
             width: 100px;
+        }
+        .method{
+            margin-left: 20px!important;
+            border-left:1px solid #ddd;
+        }
+        .type{
+            cursor: pointer;
+        }
+        .tips{
+            font-size: 12px;
+            color:#999;
+            padding-left: 80px;
         }
         .contentType {
             margin-right: 10px !important;
@@ -97,15 +115,20 @@
                     <a href="/">
                         <img src="/static/images/logo.png" height="80px" />
                     </a>
-                    <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank" style="float:right;margin-bottom:10px;">开源地址</el-link>
+                    <span style="float:right;margin-bottom:10px;" class="no-select">
+                        <el-link type="primary" href="javascript:;" @click.native="dialogForSetting=true">环境设置</el-link>
+                        <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank" >本地调试教程</el-link>
+                        <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank" >开源地址</el-link>
+                    </span>
                 </el-header>
                 <el-main>
                     <div>
-                        <el-input placeholder="请输入请求的URL" class="input-with-select" v-model="request.url">
-                            <el-select v-model="request.method" slot="prepend" placeholder="请选择请求方式">
+                        <el-input placeholder="请输入请求的URL" class="input-with-select no-select" v-model="request.url">
+                            <el-link slot="prepend" class="type no-select" title="切换线上和本地版本"  @click.native="changeType">{{nowType}}</el-link>
+                            <el-select class="method no-select" v-model="request.method" slot="prepend" placeholder="请选择请求方式">
                                 <el-option :label="item" :value="item" v-for="item in factory.methodList"></el-option>
                             </el-select>
-                            <el-select slot="append" class="contentType" v-model="factory.contentType" placeholder="ContentType" @change="contentTypeChanged">
+                            <el-select slot="append" class="contentType no-select" v-model="factory.contentType" placeholder="ContentType" @change="contentTypeChanged">
                                 <el-option :key="item.value" :label="item.label" :value="item.value" v-for="item in factory.contentTypeList"> <span style="float: left">{{ item.label }}　　</span>
 	<span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
 
@@ -144,12 +167,26 @@
                     </el-tabs>
                 </el-main>
             </el-container>
+            <!-- 环境设置框 -->
+            <el-dialog title="环境设置" :visible.sync="dialogForSetting" :modal-append-to-body='false'>
+                <el-form  status-icon>
+                    <el-form-item label="在线地址" label-width="80px">
+                        <el-input size="medium" autocomplete="off" v-model="urlList.online"></el-input>
+                    </el-form-item>
+                    <el-form-item label="本地地址" label-width="80px">
+                        <el-input size="medium" autocomplete="off" v-model="urlList.local"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div class="tips">如配置了以上两个地址,生成测试用例时会将本地地址替换为线上地址.</div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="dialogForSetting=false;localStorage.setItem('urlList',JSON.stringify(urlList));">配置完成</el-button>
+                </div>
+            </el-dialog>
         </div>
     </body>
     <script src="/static/js/vue-2.6.10.min.js"></script>
     <script src="/static/js/axios.min.js"></script>
     <script src="/static/js/element.js"></script>
-    <script src="/static/js/StartAdmin.js"></script>
     <link rel="stylesheet" href="/static/css/highlight.min.css">
     <script src="/static/js/highlight.min.js"></script>
     <script>
@@ -157,9 +194,16 @@
         el: '#app',
         data() {
             return {
+                urlList:{
+                    online:"",
+                    local:""
+                },
+                nowType:"线上版",
+                dialogForSetting:false,
                 request: {
-                    method: "GET",
+                    method: "POST",
                     url: "https://tester.hamm.cn/test.php",
+                    // url:"http://new.wendaxiaomi.com/api/user/login",
                     body: "",
                     header: "",
                     cookie: ""
@@ -173,9 +217,9 @@
                 factory: {
                     requestActive: "Body",
                     header: {
-                        'Content-Type': 'application/json;',
+                        'Content-Type': 'application/x-www-form-urlencoded;',
                     },
-                    contentType: 'application/json;',
+                    contentType: 'application/x-www-form-urlencoded;',
                     contentTypeList: [{
                             label: 'JSON',
                             value: 'application/json;'
@@ -198,7 +242,7 @@
      }
                     ],
                     methodList: [
-      'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH' //,'HEAD',
+      'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH'
 
 
 
@@ -217,6 +261,14 @@
             if (key) {
                 this.getData(key);
             }
+            try{
+                this.urlList = !localStorage.getItem('urlList')?{online:"",local:""}:JSON.parse(localStorage.getItem('urlList'));
+            }catch(e){
+                this.urlList = {
+                  online:'',
+                  local:''
+                };
+            }
         },
         updated() {
             document.querySelectorAll('pre').forEach(function (block) {
@@ -224,6 +276,15 @@
             });
         },
         methods: {
+            changeType(){
+                if(this.nowType=="线上版"){
+                    this.nowType = "本地版";
+                    this.factory.methodList = ['GET', 'POST'];
+                }else{
+                    this.nowType="线上版";
+                    this.factory.methodList = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH'];
+                }
+            },
             contentTypeChanged() {
                 this.factory.requestActive = 'Header';
                 this.updateData();
@@ -277,121 +338,287 @@
             },
             onSubmit() {
                 var that = this;
-                var arr = that.request.header.split('\n');
-                that.factory.header = {};
-                for (var index in arr) {
-                    var match = arr[index].match(/(.*?):/);
-                    if (match) {
-                        var value = arr[index].replace(match[0], '');
-                        that.factory.header[match[1]] = value;
-                        if (match[1].toLowerCase() == 'content-type') {
-                            that.factory.contentType = value;
+                if(that.nowType=="线上版"){
+                    var arr = that.request.header.split('\n');
+                    that.factory.header = {};
+                    for (var index in arr) {
+                        var match = arr[index].match(/(.*?):/);
+                        if (match) {
+                            var value = arr[index].replace(match[0], '');
+                            that.factory.header[match[1]] = value;
+                            if (match[1].toLowerCase() == 'content-type') {
+                                that.factory.contentType = value;
+                            }
                         }
                     }
-                }
-                that.updateData();
-                axios.post('api.php', that.request)
-                    .then(function (response) {
-                    if (response.data.code == 200) {
-                        that.$message({
-                            message: '请求成功',
-                            type: 'success'
-                        });
-                        try {
-                            that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
-                        } catch (error) {
-                            that.response.body = that.html2Escape(response.data.data.body);
+                    that.updateData();
+                    axios.post('api.php', that.request)
+                        .then(function (response) {
+                        if (response.data.code == 200) {
+                            that.$message({
+                                message: '请求成功',
+                                type: 'success'
+                            });
+                            that.decodeResponseDataOnline(response);
+                        } else {
+                            that.$message.error(response.data.msg);
                         }
-                        try {
-                            that.response.detail = unescape(that.JsonFormat(response.data.data.detail))
-                        } catch (error) {
-                            that.response.detail = that.html2Escape(response.data.data.detail);
-                        }
-                        try {
-                            that.response.header = unescape(that.JsonFormat(JSON.parse(response.data.data.header)))
-                        } catch (error) {
-                            that.response.header = that.html2Escape(response.data.data.header);
-                        }
-                        that.response.httpcode = response.data.data.detail.http_code;
-                        location.href = "/#/" + response.data.data.key;
-
-                        that.response.markdown = '';
-                        that.response.markdown += '## xxx API接口文档\n\n';
-                        that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
-                            '\n\n';
-
-                        that.response.markdown += '#### 一、接口说明\n\n';
-                        that.response.markdown += '你可以在这里对接口进行一些简单的描述\n\n';
-                        that.response.markdown += '#### 二、请求方式\n\n';
-                        that.response.markdown += '```' + that.request.method + ' ' + that.request.url + '```\n\n';
-                        that.response.markdown += '#### 三、请求参数\n\n';
-                        if (that.request.method != 'GET') {
-                            switch (that.factory.contentType) {
-                            case 'application/json;':
-                                try {
-                                    var obj = JSON.parse(that.request.body);
-                                    that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
-                                    that.response.markdown += '|-|-|-|-|-|\n';
-                                    that.response.markdown += that.getJsonMarkdown(obj);
-                                    
-                                    that.response.markdown += '\n示例请求参数：\n\n';
-                                    that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
-                                            '\n```\n\n';
-                                } catch (error) {
-                                    that.response.markdown +=  that.request.body + '\n\n';
-                                }
-                                break;
-                            case 'application/x-www-form-urlencoded;':
-                                that.response.markdown += '|字段|类型|必填|说明|\n';
-                                that.response.markdown += '|-|-|-|-|-|\n';
-                                var arr = that.request.body.split('&');
-                                for (var index in arr) {
-                                    var item = arr[index].split('=');
-                                    if (item.length == 2) {
-                                        var type = typeof (item[1]);
-                                        that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
-                                    }
-                                }
-                                that.response.markdown += '\n示例请求参数：\n\n';
-                                try {
-                                    that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
-                                        '\n```\n\n';
-                                } catch (error) {
-                                    that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
-                                }
-                                break;
-                            default:
+                    })
+                        .
+                    catch (function (error) {
+                        console.log(error)
+                        that.$message.error('出现异常，你可以控制台查看错误');
+                    });
+                }else{
+                    //走本地
+                    axios.post('api.php?local=1', that.request)
+                        .then(function (response) {
+                        if (response.data.code == 200) {
+                            var key =response.data.data;
+                            switch(that.request.method){
+                                case 'POST':
+                                    axios.post(that.request.url, that.request.body,{
+                                        headers: that.request.headers
+                                    })
+                                        .then(function (response) {
+                                            if(!response.headers){
+                                                that.$message.error("请求失败，请先配置允许跨域和安全访问！");
+                                                return;
+                                            }
+                                            that.$message({
+                                                message: '请求成功',
+                                                type: 'success'
+                                            });
+                                            var resp = {
+                                                header:response.headers,
+                                                body:response.data,
+                                                http_code:200,
+                                                detail:response,
+                                                key:key
+                                            };
+                                            that.decodeResponseDataLocal(resp);
+                                    })
+                                        .
+                                    catch (function (error) {
+                                        if (error.response) {
+                                            var resp = {
+                                                header:error.response.headers,
+                                                body:error.response.data,
+                                                http_code:error.response.status,
+                                                detail:error.response,
+                                                key:key
+                                            };
+                                            that.decodeResponseDataLocal(resp);
+                                        } else if (error.request) {
+                                            console.log(error.request);
+                                            that.$message.error("请求失败，请先配置允许跨域和安全访问！");
+                                        } else {
+                                            that.$message.error(error.message);
+                                        }
+                                    });
+                                    break;
+                                case 'GET':
+                                    break;
+                                default:
                             }
                         } else {
-                            that.response.markdown += '请求参数请查看URL\n\n';
+                            that.$message.error(response.data.msg);
                         }
-                        that.response.markdown += '#### 四、更多参数\n\n';
-                        that.response.markdown += 'Headers:\n\n';
-                        that.response.markdown += '```\n' + that.request.header + '\n```\n\n';
-                        if (that.request.cookie) {
-                            that.response.markdown += 'Cookies:\n\n';
-                            that.response.markdown += '```\n' + that.request.cookie + '\n```\n\n';
-                        }
-                        that.response.markdown += '#### 五、返回数据\n\n';
-                        try {
-                            that.response.markdown += '|字段|类型|固定返回|示例值|说明|\n';
-                            that.response.markdown += '|-|-|-|-|-|\n';
-                            var obj = JSON.parse(that.response.body);
-                            that.response.markdown += that.getJsonMarkdown(obj);
-                        } catch (error) {
-                            that.response.markdown += that.response.body + '\n\n';
-                        }
-                        that.response.markdown += '\n示例返回结果：\n\n';
-                        that.response.markdown += '```\n' + that.response.body + '\n```\n\n';
-                    } else {
-                        that.$message.error(response.data.msg);
+                    })
+                        .
+                    catch (function (error) {
+                        console.log(error)
+                        that.$message.error('出现异常，你可以控制台查看错误');
+                    });
+                }
+            },
+            decodeResponseDataLocal(response){
+                var that = this;
+                try {
+                        that.response.body = unescape(that.JsonFormat(response.body))
+                    } catch (error) {
+                        that.response.body = that.html2Escape(response.body);
                     }
-                })
-                    .
-                catch (function (error) {
-                    console.log(error)
-                    that.$message.error('出现异常，你可以控制台查看错误');
-                });
+                    delete response.detail.data;
+                    try {
+                        that.response.detail = unescape(that.JsonFormat(response.detail))
+                    } catch (error) {
+                        that.response.detail = that.html2Escape(response.detail);
+                    }
+                    try {
+                        that.response.header = unescape(that.JsonFormat(response.header))
+                    } catch (error) {
+                        that.response.header = that.html2Escape(response.header);
+                    }
+                    that.response.httpcode = response.http_code;
+                    location.href = "/#/" + response.key;
+                    // if(response.http_code!=200){
+                    //     that.response.markdown += '## 本地版非200状态码不生成文档';
+                    //     return;
+                    // }
+                    that.response.markdown = '';
+                    that.response.markdown += '## xxx API接口文档\n\n';
+                    that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
+                        '\n\n';
+
+                    that.response.markdown += '#### 一、接口说明\n\n';
+                    that.response.markdown += '你可以在这里对接口进行一些简单的描述\n\n';
+                    that.response.markdown += '#### 二、请求方式\n\n';
+                    that.response.markdown += '```' + that.request.method + ' ' + (that.request.url.replace(that.urlList.local,that.urlList.online)) + '```\n\n';
+                    that.response.markdown += '#### 三、请求参数\n\n';
+                    if (that.request.method != 'GET') {
+                        switch (that.factory.contentType) {
+                        case 'application/json;':
+                            try {
+                                var obj = JSON.parse(that.request.body);
+                                that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += that.getJsonMarkdown(obj);
+                                
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                        '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown +=  that.request.body + '\n\n';
+                            }
+                            break;
+                        case 'application/x-www-form-urlencoded;':
+                            that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                            that.response.markdown += '|-|-|-|-|-|\n';
+                            var arr = that.request.body.split('&');
+                            for (var index in arr) {
+                                var item = arr[index].split('=');
+                                if (item.length == 2) {
+                                    var type = typeof (item[1]);
+                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
+                                }
+                            }
+                            that.response.markdown += '\n示例请求参数：\n\n';
+                            try {
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                    '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                            }
+                            break;
+                        default:
+                        }
+                    } else {
+                        that.response.markdown += '请求参数请查看URL\n\n';
+                    }
+                    that.response.markdown += '#### 四、更多参数\n\n';
+                    that.response.markdown += 'Headers:\n\n';
+                    that.response.markdown += '```\n' + that.request.header + '\n```\n\n';
+                    if (that.request.cookie) {
+                        that.response.markdown += 'Cookies:\n\n';
+                        that.response.markdown += '```\n' + that.request.cookie + '\n```\n\n';
+                    }
+                    that.response.markdown += '#### 五、返回数据\n\n';
+                    try {
+                        that.response.markdown += '|字段|类型|固定返回|示例值|说明|\n';
+                        that.response.markdown += '|-|-|-|-|-|\n';
+                        var obj = JSON.parse(that.response.body);
+                        that.response.markdown += that.getJsonMarkdown(obj);
+                    } catch (error) {
+                        that.response.markdown += that.response.body + '\n\n';
+                    }
+                    that.response.markdown += '\n示例返回结果：\n\n';
+                    that.response.markdown += '```\n' + that.response.body + '\n```\n\n';
+                    that.response.markdown += '#### 六、测试用例\n\n';
+                    that.response.markdown += location.href;
+            
+            },
+            decodeResponseDataOnline(response){
+                var that = this;
+                try {
+                        that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
+                    } catch (error) {
+                        that.response.body = that.html2Escape(response.data.data.body);
+                    }
+                    try {
+                        that.response.detail = unescape(that.JsonFormat(response.data.data.detail))
+                    } catch (error) {
+                        that.response.detail = that.html2Escape(response.data.data.detail);
+                    }
+                    try {
+                        that.response.header = unescape(that.JsonFormat(JSON.parse(response.data.data.header)))
+                    } catch (error) {
+                        that.response.header = that.html2Escape(response.data.data.header);
+                    }
+                    that.response.httpcode = response.data.data.detail.http_code;
+                    location.href = "/#/" + response.data.data.key;
+
+                    that.response.markdown = '';
+                    that.response.markdown += '## xxx API接口文档\n\n';
+                    that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
+                        '\n\n';
+
+                    that.response.markdown += '#### 一、接口说明\n\n';
+                    that.response.markdown += '你可以在这里对接口进行一些简单的描述\n\n';
+                    that.response.markdown += '#### 二、请求方式\n\n';
+                    that.response.markdown += '```' + that.request.method + ' ' + that.request.url + '```\n\n';
+                    that.response.markdown += '#### 三、请求参数\n\n';
+                    if (that.request.method != 'GET') {
+                        switch (that.factory.contentType) {
+                        case 'application/json;':
+                            try {
+                                var obj = JSON.parse(that.request.body);
+                                that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += that.getJsonMarkdown(obj);
+                                
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                        '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown +=  that.request.body + '\n\n';
+                            }
+                            break;
+                        case 'application/x-www-form-urlencoded;':
+                            that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                            that.response.markdown += '|-|-|-|-|-|\n';
+                            var arr = that.request.body.split('&');
+                            for (var index in arr) {
+                                var item = arr[index].split('=');
+                                if (item.length == 2) {
+                                    var type = typeof (item[1]);
+                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
+                                }
+                            }
+                            that.response.markdown += '\n示例请求参数：\n\n';
+                            try {
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                    '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                            }
+                            break;
+                        default:
+                        }
+                    } else {
+                        that.response.markdown += '请求参数请查看URL\n\n';
+                    }
+                    that.response.markdown += '#### 四、更多参数\n\n';
+                    that.response.markdown += 'Headers:\n\n';
+                    that.response.markdown += '```\n' + that.request.header + '\n```\n\n';
+                    if (that.request.cookie) {
+                        that.response.markdown += 'Cookies:\n\n';
+                        that.response.markdown += '```\n' + that.request.cookie + '\n```\n\n';
+                    }
+                    that.response.markdown += '#### 五、返回数据\n\n';
+                    try {
+                        that.response.markdown += '|字段|类型|固定返回|示例值|说明|\n';
+                        that.response.markdown += '|-|-|-|-|-|\n';
+                        var obj = JSON.parse(that.response.body);
+                        that.response.markdown += that.getJsonMarkdown(obj);
+                    } catch (error) {
+                        that.response.markdown += that.response.body + '\n\n';
+                    }
+                    that.response.markdown += '\n示例返回结果：\n\n';
+                    that.response.markdown += '```\n' + that.response.body + '\n```\n\n';
+                    that.response.markdown += '#### 六、测试用例\n\n';
+                    that.response.markdown += location.href;
+                
             },
             getJsonMarkdown(obj, prefix = "", isArray = false) {
                 try {

@@ -30,8 +30,6 @@ if (substr($header, 0 - strlen(PHP_EOL)) == PHP_EOL) {
     $header = substr($header, 0, strlen($header) - strlen(PHP_EOL));
 }
 $header = explode(PHP_EOL, $header);
-$result = curlHelper($url, $body, $header, $cookie, $method);
-
 $key = sha1(time() . rand(10000000, 99999999));
 $dir = "./data/" . date('Ymd');
 if (!is_dir($dir)) {
@@ -44,6 +42,14 @@ file_put_contents($dir . "/" . $key . ".php", json_encode([
     "cookie" => $cookie,
     "method" => $method
 ]));
+if(isset($_GET['local'])){
+    return jok('',date('Ymd') . "/" . $key);
+}
+
+
+
+$result = curlHelper($url, $body, $header, $cookie, $method);
+
 $result['key'] = date('Ymd') . "/" . $key;
 jok('', $result);
 

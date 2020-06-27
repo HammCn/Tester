@@ -1,5 +1,6 @@
 <?php
 header("Content-Type: application/json;chartset=uft-8");
+// header("HTTP/1.1 500 Internal Server Error");
 echo json_encode([
     'code'=>0,
     'data'=>[
