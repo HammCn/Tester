@@ -26,6 +26,17 @@
 
 <a href="https://tester.hamm.cn" target="_blank">https://tester.hamm.cn</a>
 
+#### 本地调试说明
+1. Windows用户 请添加已下参数启动Chrome
+```
+--disable-web-security --user-data-dir --allow-running-insecure-content
+```
+2. Mac用户 请使用命令行启动Chrome
+```
+open -n /Applications/Google\ Chrome.app/ --args --disable-web-security  --user-data-dir=/Users/Hamm/Desktop/temp/ --allow-running-insecure-content
+```
+其中,Chrome路径和用户数据路径按自己的配置即可。
+
 #### 操作页面截图
 
 ![Tester](https://images.gitee.com/uploads/images/2020/0510/164628_c1c4614c_145025.png "Tester")
