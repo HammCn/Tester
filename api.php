@@ -42,8 +42,8 @@ file_put_contents($dir . "/" . $key . ".php", json_encode([
     "cookie" => $cookie,
     "method" => $method
 ]));
-if(isset($_GET['local'])){
-    return jok('',date('Ymd') . "/" . $key);
+if (isset($_GET['local'])) {
+    return jok('', date('Ymd') . "/" . $key);
 }
 
 
@@ -123,7 +123,7 @@ function curlHelper($url, $data = null, $header = [], $cookies = "", $method = '
     $output['header'] = substr($response, 0, $headerSize);
     $output['body'] = substr($response, $headerSize, strlen($response) - $headerSize);
     $output['detail'] = curl_getinfo($ch);
-    
+
     curl_close($ch);
     return $output;
 }
