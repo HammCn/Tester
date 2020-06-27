@@ -1,10 +1,7 @@
 <p align="center">
-
     <img src="https://images.gitee.com/uploads/images/2020/0510/163917_eab0d49d_145025.png" width="400px"/>
-
 </p>
 <p align="center">
-
     <a href="https://gitee.com/hamm/tester/stargazers">
         <img src="https://svg.hamm.cn/gitee.svg?user=hamm&project=tester&type=star"/>
     </a>
@@ -19,7 +16,6 @@
     </a>
     <img src="https://svg.hamm.cn/badge.svg?key=UI&value=Element"/>
     <img src="https://svg.hamm.cn/badge.svg?key=Base&value=vue.js"/>
-
 </p>
 
 #### 项目说明
