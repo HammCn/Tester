@@ -229,7 +229,7 @@
         el: '#app',
         data() {
             return {
-                loading:false,
+                loading: false,
                 urlList: {
                     online: "",
                     local: ""
@@ -283,7 +283,7 @@
             }
         },
         created() {
-            axios.defaults.timeout =  10000;
+            axios.defaults.timeout = 10000;
             this.updateData();
             var key = this.get_url_params();
             if (key) {
@@ -313,11 +313,11 @@
                     this.nowType = "本地版";
                     this.request.method = 'POST';
                     this.factory.methodList = ['GET', 'POST'];
-                    this.request.url = this.request.url.replace(this.urlList.online,this.urlList.local);
+                    this.request.url = this.request.url.replace(this.urlList.online, this.urlList.local);
                 } else {
                     this.nowType = "线上版";
                     this.factory.methodList = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH'];
-                    this.request.url = this.request.url.replace(this.urlList.local,this.urlList.online);
+                    this.request.url = this.request.url.replace(this.urlList.local, this.urlList.online);
                 }
             },
             contentTypeChanged() {
@@ -373,9 +373,9 @@
             },
             onSubmit() {
                 var that = this;
-                that.loading=true;
-                if(that.request.url.indexOf('http://') == -1 && that.request.url.indexOf('https://') == -1){
-                    that.request.url = "http://"+that.request.url;
+                that.loading = true;
+                if (that.request.url.indexOf('http://') == -1 && that.request.url.indexOf('https://') == -1) {
+                    that.request.url = "http://" + that.request.url;
                 }
                 if (that.nowType == "线上版") {
                     var arr = that.request.header.split('\n');
@@ -393,7 +393,7 @@
                     that.updateData();
                     axios.post('api.php', that.request)
                         .then(function(response) {
-                            that.loading=false;
+                            that.loading = false;
                             if (response.data.code == 200) {
                                 that.$message({
                                     message: '请求成功',
@@ -406,12 +406,12 @@
                         })
                         .
                     catch(function(error) {
-                        that.loading=false;
+                        that.loading = false;
                         console.log(error.request);
                         console.log(error.message);
-                        if(error.message == 'timeout of 10000ms exceeded'){
+                        if (error.message == 'timeout of 10000ms exceeded') {
                             that.$message.error("请求API接口网络超时！");
-                        }else{
+                        } else {
                             that.$message.error('出现异常，你可以控制台查看错误');
                         }
                     });
@@ -427,7 +427,7 @@
                                                 headers: that.request.headers
                                             })
                                             .then(function(response) {
-                                                that.loading=false;
+                                                that.loading = false;
                                                 if (!response.headers) {
                                                     that.$message.error("请求超时，请稍候重试！");
                                                     return;
@@ -447,7 +447,7 @@
                                             })
                                             .
                                         catch(function(error) {
-                                            that.loading=false;
+                                            that.loading = false;
                                             if (error.response) {
                                                 var resp = {
                                                     header: error.response.headers,
@@ -460,9 +460,9 @@
                                             } else if (error.request) {
                                                 console.log(error.request);
                                                 console.log(error.message);
-                                                if(error.message == 'timeout of 10000ms exceeded'){
+                                                if (error.message == 'timeout of 10000ms exceeded') {
                                                     that.$message.error("请求API接口网络超时！");
-                                                }else{
+                                                } else {
                                                     that.$message.error("本地测试请先配置允许跨域和安全访问！");
                                                 }
                                             } else {
@@ -471,11 +471,11 @@
                                         });
                                         break;
                                     case 'GET':
-                                        axios.get(that.request.url,  {
+                                        axios.get(that.request.url, {
                                                 headers: that.request.headers
                                             })
                                             .then(function(response) {
-                                                that.loading=false;
+                                                that.loading = false;
                                                 if (!response.headers) {
                                                     that.$message.error("请求超时，请稍候重试！");
                                                     return;
@@ -495,7 +495,7 @@
                                             })
                                             .
                                         catch(function(error) {
-                                            that.loading=false;
+                                            that.loading = false;
                                             if (error.response) {
                                                 var resp = {
                                                     header: error.response.headers,
@@ -508,9 +508,9 @@
                                             } else if (error.request) {
                                                 console.log(error.request);
                                                 console.log(error.message);
-                                                if(error.message == 'timeout of 10000ms exceeded'){
+                                                if (error.message == 'timeout of 10000ms exceeded') {
                                                     that.$message.error("请求API接口网络超时！");
-                                                }else{
+                                                } else {
                                                     that.$message.error("本地测试请先配置允许跨域和安全访问！");
                                                 }
                                             } else {
@@ -535,9 +535,9 @@
             decodeResponseDataLocal(response) {
                 var that = this;
                 try {
-                    if(typeof(response.body) == "object"){
+                    if (typeof(response.body) == "object") {
                         that.response.body = unescape(that.JsonFormat(response.body));
-                    }else{
+                    } else {
                         that.response.body = that.JsonFormat(JSON.parse(response.body));
                     }
                 } catch (error) {
@@ -556,7 +556,7 @@
                 }
                 that.response.httpcode = response.http_code;
                 location.href = "/#/" + response.key;
-                
+
                 that.response.markdown = '';
                 that.response.markdown += '## xxx API接口文档\n\n';
                 that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
