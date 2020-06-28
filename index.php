@@ -580,7 +580,7 @@
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
-                                that.response.markdown += that.request.body + '\n\n';
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
@@ -606,6 +606,19 @@
                             }
                             break;
                         default:
+                            try {
+                                var obj = JSON.parse(that.request.body);
+                                that.response.markdown += '|字段|类型|必填|说明|\n';
+                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += that.getJsonMarkdown(obj);
+
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                    '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                            }
                     }
                 } else {
                     that.response.markdown += '请求参数请查看URL\n\n';
@@ -676,7 +689,7 @@
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
-                                that.response.markdown += that.request.body + '\n\n';
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
@@ -702,6 +715,19 @@
                             }
                             break;
                         default:
+                            try {
+                                var obj = JSON.parse(that.request.body);
+                                that.response.markdown += '|字段|类型|必填|说明|\n';
+                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += that.getJsonMarkdown(obj);
+
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                    '\n```\n\n';
+                            } catch (error) {
+                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                            }
                     }
                 } else {
                     that.response.markdown += '请求参数请查看URL\n\n';
