@@ -33,7 +33,7 @@
 
         .logo {
             font-size: 32px;
-            color: : #666;
+            color: #666;
         }
 
         .no-select * {
@@ -594,7 +594,7 @@
                                     that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
                                 }
                             }
-                            if(arr.length ==0 || arr.length==1 && !arr[0]){
+                            if (arr.length == 0 || arr.length == 1 && !arr[0]) {
                                 that.response.markdown += '|-|-|-|-|\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
@@ -703,7 +703,7 @@
                                     that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
                                 }
                             }
-                            if(arr.length ==0 || arr.length==1 && !arr[0]){
+                            if (arr.length == 0 || arr.length == 1 && !arr[0]) {
                                 that.response.markdown += '|-|-|-|-|\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
