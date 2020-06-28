@@ -147,8 +147,9 @@
                     <img src="/static/images/logo.png" height="80px" />
                 </a>
                 <span style="float:right;margin-bottom:10px;" class="no-select">
-                    <el-link type="primary" href="javascript:;" @click.native="dialogForSetting=true">环境设置</el-link>
-                    <el-link type="primary" href="https://gitee.com/hamm/tester/blob/master/README.md" target="_blank">本地调试教程</el-link>
+                    <el-link type="primary" href="https://gitee.com/hamm/tester/attach_files" target="_blank">下载客户端</el-link>
+                    <el-link type="primary" href="javascript:;" @click.native="dialogForSetting=true">环境变量</el-link>
+                    <el-link type="primary" href="https://gitee.com/hamm/tester/blob/master/README.md" target="_blank">配置教程</el-link>
                     <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank">开源地址</el-link>
                 </span>
             </el-header>
@@ -165,7 +166,7 @@
 
                             </el-option>
                         </el-select>
-                        <el-button slot="append" icon="el-icon-s-promotion" @click="onSubmit">请求</el-button>
+                        <el-button slot="append" icon="el-icon-s-promotion" @click="onSubmit" v-loading.fullscreen.lock="loading">请求</el-button>
                     </el-input>
                 </div>
                 <br>
@@ -211,7 +212,7 @@
                     <el-input size="medium" autocomplete="off" v-model="urlList.local"></el-input>
                 </el-form-item>
             </el-form>
-            <div class="tips">如配置了以上两个地址,生成测试用例时会将本地地址替换为线上地址.</div>
+            <div class="tips">生成测试用例时会将本地地址替换为线上地址<br>切换调试环境时将会为你自动切换请求地址</div>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="dialogForSetting=false;localStorage.setItem('urlList',JSON.stringify(urlList));">配置完成</el-button>
             </div>
@@ -228,6 +229,7 @@
         el: '#app',
         data() {
             return {
+                loading:false,
                 urlList: {
                     online: "",
                     local: ""
@@ -276,19 +278,12 @@
                     ],
                     methodList: [
                         'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH'
-
-
-
-
-
-
-
-
                     ]
                 }
             }
         },
         created() {
+            axios.defaults.timeout =  10000;
             this.updateData();
             var key = this.get_url_params();
             if (key) {
@@ -316,10 +311,13 @@
             changeType() {
                 if (this.nowType == "线上版") {
                     this.nowType = "本地版";
+                    this.request.method = 'POST';
                     this.factory.methodList = ['GET', 'POST'];
+                    this.request.url = this.request.url.replace(this.urlList.online,this.urlList.local);
                 } else {
                     this.nowType = "线上版";
                     this.factory.methodList = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'PATCH'];
+                    this.request.url = this.request.url.replace(this.urlList.local,this.urlList.online);
                 }
             },
             contentTypeChanged() {
@@ -375,6 +373,10 @@
             },
             onSubmit() {
                 var that = this;
+                that.loading=true;
+                if(that.request.url.indexOf('http://') == -1 && that.request.url.indexOf('https://') == -1){
+                    that.request.url = "http://"+that.request.url;
+                }
                 if (that.nowType == "线上版") {
                     var arr = that.request.header.split('\n');
                     that.factory.header = {};
@@ -391,6 +393,7 @@
                     that.updateData();
                     axios.post('api.php', that.request)
                         .then(function(response) {
+                            that.loading=false;
                             if (response.data.code == 200) {
                                 that.$message({
                                     message: '请求成功',
@@ -403,8 +406,14 @@
                         })
                         .
                     catch(function(error) {
-                        console.log(error)
-                        that.$message.error('出现异常，你可以控制台查看错误');
+                        that.loading=false;
+                        console.log(error.request);
+                        console.log(error.message);
+                        if(error.message == 'timeout of 10000ms exceeded'){
+                            that.$message.error("请求API接口网络超时！");
+                        }else{
+                            that.$message.error('出现异常，你可以控制台查看错误');
+                        }
                     });
                 } else {
                     //走本地
@@ -418,8 +427,9 @@
                                                 headers: that.request.headers
                                             })
                                             .then(function(response) {
+                                                that.loading=false;
                                                 if (!response.headers) {
-                                                    that.$message.error("请求失败，请先配置允许跨域和安全访问！");
+                                                    that.$message.error("请求超时，请稍候重试！");
                                                     return;
                                                 }
                                                 that.$message({
@@ -437,6 +447,7 @@
                                             })
                                             .
                                         catch(function(error) {
+                                            that.loading=false;
                                             if (error.response) {
                                                 var resp = {
                                                     header: error.response.headers,
@@ -448,13 +459,64 @@
                                                 that.decodeResponseDataLocal(resp);
                                             } else if (error.request) {
                                                 console.log(error.request);
-                                                that.$message.error("请求失败，请先配置允许跨域和安全访问！");
+                                                console.log(error.message);
+                                                if(error.message == 'timeout of 10000ms exceeded'){
+                                                    that.$message.error("请求API接口网络超时！");
+                                                }else{
+                                                    that.$message.error("本地测试请先配置允许跨域和安全访问！");
+                                                }
                                             } else {
                                                 that.$message.error(error.message);
                                             }
                                         });
                                         break;
                                     case 'GET':
+                                        axios.get(that.request.url,  {
+                                                headers: that.request.headers
+                                            })
+                                            .then(function(response) {
+                                                that.loading=false;
+                                                if (!response.headers) {
+                                                    that.$message.error("请求超时，请稍候重试！");
+                                                    return;
+                                                }
+                                                that.$message({
+                                                    message: '请求成功',
+                                                    type: 'success'
+                                                });
+                                                var resp = {
+                                                    header: response.headers,
+                                                    body: response.data,
+                                                    http_code: 200,
+                                                    detail: response,
+                                                    key: key
+                                                };
+                                                that.decodeResponseDataLocal(resp);
+                                            })
+                                            .
+                                        catch(function(error) {
+                                            that.loading=false;
+                                            if (error.response) {
+                                                var resp = {
+                                                    header: error.response.headers,
+                                                    body: error.response.data,
+                                                    http_code: error.response.status,
+                                                    detail: error.response,
+                                                    key: key
+                                                };
+                                                that.decodeResponseDataLocal(resp);
+                                            } else if (error.request) {
+                                                console.log(error.request);
+                                                console.log(error.message);
+                                                if(error.message == 'timeout of 10000ms exceeded'){
+                                                    that.$message.error("请求API接口网络超时！");
+                                                }else{
+                                                    that.$message.error("本地测试请先配置允许跨域和安全访问！");
+                                                }
+                                            } else {
+                                                that.$message.error(error.message);
+                                            }
+                                        });
                                         break;
                                     default:
                                 }
@@ -469,10 +531,15 @@
                     });
                 }
             },
+            //解析本地版本返回的数据
             decodeResponseDataLocal(response) {
                 var that = this;
                 try {
-                    that.response.body = unescape(that.JsonFormat(response.body))
+                    if(typeof(response.body) == "object"){
+                        that.response.body = unescape(that.JsonFormat(response.body));
+                    }else{
+                        that.response.body = that.JsonFormat(JSON.parse(response.body));
+                    }
                 } catch (error) {
                     that.response.body = that.html2Escape(response.body);
                 }
@@ -489,10 +556,7 @@
                 }
                 that.response.httpcode = response.http_code;
                 location.href = "/#/" + response.key;
-                // if(response.http_code!=200){
-                //     that.response.markdown += '## 本地版非200状态码不生成文档';
-                //     return;
-                // }
+                
                 that.response.markdown = '';
                 that.response.markdown += '## xxx API接口文档\n\n';
                 that.response.markdown += '> 本文档由 [Tester](https://tester.hamm.cn) 自动生成，最后修改时间 ' + that.getNowDateTime() +
@@ -565,6 +629,7 @@
                 that.response.markdown += location.href;
 
             },
+            //解析在线版本返回的数据
             decodeResponseDataOnline(response) {
                 var that = this;
                 try {
