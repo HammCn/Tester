@@ -35,7 +35,7 @@
 1. Windows用户 请添加已下参数启动Chrome
 
 ``` 
---C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe --args  --disable-web-security --user-data-dir=c:\temp --allow-running-insecure-content
+C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe --args  --disable-web-security --user-data-dir=c:\temp --allow-running-insecure-content
 ```
 
 2. Mac用户 请使用命令行启动Chrome
