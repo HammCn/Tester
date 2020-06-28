@@ -42,7 +42,7 @@ C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe --args
 2. Mac用户 请使用命令行启动Chrome
 
 ``` 
-open -n /Applications/Google\ Chrome.app/ --args --disable-web-security  --user-data-dir=/Users/Hamm/Desktop/temp/ --allow-running-insecure-content
+open -n /Applications/Google\ Chrome.app/ --args --disable-web-security  --user-data-dir=/Users/Hamm/temp/chrome/ --allow-running-insecure-content --app=https://tester.hamm.cn
 ```
 
 其中, Chrome路径和用户数据路径按自己的配置即可。
