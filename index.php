@@ -572,7 +572,7 @@
                         case 'application/json;':
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                                that.response.markdown += '|字段|类型|必填|说明|\n';
                                 that.response.markdown += '|-|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
@@ -584,7 +584,7 @@
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
-                            that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
+                            that.response.markdown += '|字段|类型|必填|说明|\n';
                             that.response.markdown += '|-|-|-|-|-|\n';
                             var arr = that.request.body.split('&');
                             for (var index in arr) {
@@ -593,6 +593,9 @@
                                     var type = typeof(item[1]);
                                     that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
                                 }
+                            }
+                            if(arr.length ==0 || arr.length==1 && !arr[0]){
+                                that.response.markdown += '|-|-|-|-|\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
                             try {
@@ -665,8 +668,8 @@
                         case 'application/json;':
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
-                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += '|字段|类型|必填|说明|\n';
+                                that.response.markdown += '|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例请求参数：\n\n';
@@ -677,8 +680,8 @@
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
-                            that.response.markdown += '|字段|类型|必填|示例值|说明|\n';
-                            that.response.markdown += '|-|-|-|-|-|\n';
+                            that.response.markdown += '|字段|类型|必填|说明|\n';
+                            that.response.markdown += '|-|-|-|-|\n';
                             var arr = that.request.body.split('&');
                             for (var index in arr) {
                                 var item = arr[index].split('=');
@@ -686,6 +689,9 @@
                                     var type = typeof(item[1]);
                                     that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
                                 }
+                            }
+                            if(arr.length ==0 || arr.length==1 && !arr[0]){
+                                that.response.markdown += '|-|-|-|-|\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
                             try {
