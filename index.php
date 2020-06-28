@@ -229,6 +229,7 @@
         el: '#app',
         data() {
             return {
+                maxResponseLength:51200,
                 loading: false,
                 urlList: {
                     online: "",
@@ -534,14 +535,18 @@
             //解析本地版本返回的数据
             decodeResponseDataLocal(response) {
                 var that = this;
-                try {
-                    if (typeof(response.body) == "object") {
-                        that.response.body = unescape(that.JsonFormat(response.body));
-                    } else {
-                        that.response.body = that.JsonFormat(JSON.parse(response.body));
+                if(response.body.length>that.maxResponseLength){
+                    that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
+                }else{
+                    try {
+                        if (typeof(response.body) == "object") {
+                            that.response.body = unescape(that.JsonFormat(response.body));
+                        } else {
+                            that.response.body = that.JsonFormat(JSON.parse(response.body));
+                        }
+                    } catch (error) {
+                        that.response.body = that.html2Escape(response.body);
                     }
-                } catch (error) {
-                    that.response.body = that.html2Escape(response.body);
                 }
                 delete response.detail.data;
                 try {
@@ -555,6 +560,7 @@
                     that.response.header = that.html2Escape(response.header);
                 }
                 that.response.httpcode = response.http_code;
+                
                 location.href = "/#/" + response.key;
 
                 that.response.markdown = '';
@@ -648,10 +654,14 @@
             //解析在线版本返回的数据
             decodeResponseDataOnline(response) {
                 var that = this;
-                try {
-                    that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
-                } catch (error) {
-                    that.response.body = that.html2Escape(response.data.data.body);
+                if(response.data.data.body.length>that.maxResponseLength){
+                    that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
+                }else{
+                    try {
+                        that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
+                    } catch (error) {
+                        that.response.body = that.html2Escape(response.data.data.body);
+                    }
                 }
                 try {
                     that.response.detail = unescape(that.JsonFormat(response.data.data.detail))
