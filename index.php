@@ -155,7 +155,7 @@
             </el-header>
             <el-main>
                 <div>
-                    <el-input placeholder="请输入请求的URL" class="input-with-select no-select" v-model="request.url">
+                    <el-input placeholder="请输入请求的URL" @input="requestUrlChanged" class="input-with-select no-select" v-model="request.url">
                         <el-link slot="prepend" class="type no-select" title="切换线上和本地版本" @click.native="changeType">{{nowType}}</el-link>
                         <el-select class="method no-select" v-model="request.method" slot="prepend" placeholder="请选择请求方式">
                             <el-option :label="item" :value="item" v-for="item in factory.methodList"></el-option>
@@ -206,15 +206,15 @@
         <el-dialog title="环境设置" :visible.sync="dialogForSetting" :modal-append-to-body='false'>
             <el-form status-icon>
                 <el-form-item label="在线地址" label-width="80px">
-                    <el-input size="medium" autocomplete="off" v-model="urlList.online"></el-input>
+                    <el-input size="medium" autocomplete="off" v-model="urlList.online" placeholder="在线域名 如https://tester.hamm.cn/"></el-input>
                 </el-form-item>
                 <el-form-item label="本地地址" label-width="80px">
-                    <el-input size="medium" autocomplete="off" v-model="urlList.local"></el-input>
+                    <el-input size="medium" autocomplete="off" v-model="urlList.local" placeholder="本地域名 如http://127.0.0.1/"></el-input>
                 </el-form-item>
             </el-form>
             <div class="tips">生成测试用例时会将本地地址替换为线上地址<br>切换调试环境时将会为你自动切换请求地址</div>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogForSetting=false;localStorage.setItem('urlList',JSON.stringify(urlList));">配置完成</el-button>
+                <el-button type="primary" @click="saveUrlList">配置完成</el-button>
             </div>
         </el-dialog>
     </div>
@@ -308,6 +308,19 @@
             });
         },
         methods: {
+            requestUrlChanged(){
+                this.request.url = this.request.url.replace(/\s+/g,"");
+            },
+            saveUrlList(){
+                this.dialogForSetting=false;
+                this.urlList.online = this.urlList.online.replace(/\s+/g,"");
+                this.urlList.local = this.urlList.local.replace(/\s+/g,"");
+                localStorage.setItem('urlList',JSON.stringify(this.urlList));
+                this.$message({
+                    message: '你的环境变量配置成功！',
+                    type: 'success'
+                });
+            },
             //切换调试环境
             changeType() {
                 if (this.nowType == "线上版") {
@@ -579,7 +592,7 @@
                             try {
                                 var obj = JSON.parse(that.request.body);
                                 that.response.markdown += '|字段|类型|必填|说明|\n';
-                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += '|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例请求参数：\n\n';
@@ -591,7 +604,7 @@
                             break;
                         case 'application/x-www-form-urlencoded;':
                             that.response.markdown += '|字段|类型|必填|说明|\n';
-                            that.response.markdown += '|-|-|-|-|-|\n';
+                            that.response.markdown += '|-|-|-|-|\n';
                             var arr = that.request.body.split('&');
                             for (var index in arr) {
                                 var item = arr[index].split('=');
