@@ -229,7 +229,7 @@
         el: '#app',
         data() {
             return {
-                maxResponseLength:51200,
+                maxResponseLength:10240,
                 loading: false,
                 urlList: {
                     online: "",
