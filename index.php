@@ -431,7 +431,9 @@
                     });
                 } else {
                     //走本地
-                    axios.post('api.php?local=1', that.request)
+                    var request = JSON.parse(JSON.stringify(that.request));
+                    request.url = request.url.replace(that.urlList.local, that.urlList.online);
+                    axios.post('api.php?local=1', request)
                         .then(function(response) {
                             if (response.data.code == 200) {
                                 var key = response.data.data;
