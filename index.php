@@ -229,7 +229,7 @@
         el: '#app',
         data() {
             return {
-                maxResponseLength:10240,
+                maxResponseLength: 10240,
                 loading: false,
                 urlList: {
                     online: "",
@@ -308,14 +308,14 @@
             });
         },
         methods: {
-            requestUrlChanged(){
-                this.request.url = this.request.url.replace(/\s+/g,"");
+            requestUrlChanged() {
+                this.request.url = this.request.url.replace(/\s+/g, "");
             },
-            saveUrlList(){
-                this.dialogForSetting=false;
-                this.urlList.online = this.urlList.online.replace(/\s+/g,"");
-                this.urlList.local = this.urlList.local.replace(/\s+/g,"");
-                localStorage.setItem('urlList',JSON.stringify(this.urlList));
+            saveUrlList() {
+                this.dialogForSetting = false;
+                this.urlList.online = this.urlList.online.replace(/\s+/g, "");
+                this.urlList.local = this.urlList.local.replace(/\s+/g, "");
+                localStorage.setItem('urlList', JSON.stringify(this.urlList));
                 this.$message({
                     message: '你的环境变量配置成功！',
                     type: 'success'
@@ -550,9 +550,9 @@
             //解析本地版本返回的数据
             decodeResponseDataLocal(response) {
                 var that = this;
-                if(response.body.length>that.maxResponseLength){
+                if (response.body.length > that.maxResponseLength) {
                     that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                }else{
+                } else {
                     try {
                         if (typeof(response.body) == "object") {
                             that.response.body = unescape(that.JsonFormat(response.body));
@@ -575,7 +575,7 @@
                     that.response.header = that.html2Escape(response.header);
                 }
                 that.response.httpcode = response.http_code;
-                
+
                 location.href = "/#/" + response.key;
 
                 that.response.markdown = '';
@@ -669,9 +669,9 @@
             //解析在线版本返回的数据
             decodeResponseDataOnline(response) {
                 var that = this;
-                if(response.data.data.body.length>that.maxResponseLength){
+                if (response.data.data.body.length > that.maxResponseLength) {
                     that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                }else{
+                } else {
                     try {
                         that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
                     } catch (error) {
