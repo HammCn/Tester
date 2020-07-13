@@ -136,6 +136,10 @@
         ::-webkit-scrollbar-corner {
             background: transparent;
         }
+
+        .input-with-select {
+            display: block;
+        }
     </style>
 </head>
 
@@ -155,7 +159,7 @@
             </el-header>
             <el-main>
                 <div>
-                    <el-input placeholder="请输入请求的URL" @input="requestUrlChanged" class="input-with-select no-select" v-model="request.url">
+                    <el-autocomplete placeholder="请输入请求的URL" @input="requestUrlChanged" class="input-with-select no-select" v-model="request.url" :fetch-suggestions="querySearch" @select="handleSelect">
                         <el-link slot="prepend" class="type no-select" title="切换线上和本地版本" @click.native="changeType">{{nowType}}</el-link>
                         <el-select class="method no-select" v-model="request.method" slot="prepend" placeholder="请选择请求方式">
                             <el-option :label="item" :value="item" v-for="item in factory.methodList"></el-option>
@@ -167,7 +171,7 @@
                             </el-option>
                         </el-select>
                         <el-button slot="append" icon="el-icon-s-promotion" @click="onSubmit" v-loading.fullscreen.lock="loading">请求</el-button>
-                    </el-input>
+                    </el-autocomplete>
                 </div>
                 <br>
                 <el-tabs type="border-card" v-model="factory.requestActive">
@@ -229,7 +233,7 @@
         el: '#app',
         data() {
             return {
-                maxResponseLength:10240,
+                maxResponseLength: 10240,
                 loading: false,
                 urlList: {
                     online: "",
@@ -242,7 +246,8 @@
                     url: "https://tester.hamm.cn/test.php",
                     body: "",
                     header: "",
-                    cookie: ""
+                    cookie: "",
+                    value: "",
                 },
                 response: {
                     body: "",
@@ -250,6 +255,8 @@
                     header: "",
                     markdown: ""
                 },
+                historyMax: 100, //最大历史
+                historyList: [], //历史
                 factory: {
                     requestActive: "Body",
                     header: {
@@ -301,6 +308,11 @@
                     local: ''
                 };
             }
+            try {
+                this.historyList = !localStorage.getItem('history') ? [] : JSON.parse(localStorage.getItem('history'));
+            } catch (e) {
+                this.historyList = [];
+            }
         },
         updated() {
             document.querySelectorAll('pre').forEach(function(block) {
@@ -308,14 +320,21 @@
             });
         },
         methods: {
-            requestUrlChanged(){
-                this.request.url = this.request.url.replace(/\s+/g,"");
+            handleSelect(item) {
+                this.request = item;
             },
-            saveUrlList(){
-                this.dialogForSetting=false;
-                this.urlList.online = this.urlList.online.replace(/\s+/g,"");
-                this.urlList.local = this.urlList.local.replace(/\s+/g,"");
-                localStorage.setItem('urlList',JSON.stringify(this.urlList));
+            querySearch(queryString, cb) {
+                //设置历史
+                cb(JSON.parse(JSON.stringify(this.historyList)));
+            },
+            requestUrlChanged() {
+                this.request.url = this.request.url.replace(/\s+/g, "");
+            },
+            saveUrlList() {
+                this.dialogForSetting = false;
+                this.urlList.online = this.urlList.online.replace(/\s+/g, "");
+                this.urlList.local = this.urlList.local.replace(/\s+/g, "");
+                localStorage.setItem('urlList', JSON.stringify(this.urlList));
                 this.$message({
                     message: '你的环境变量配置成功！',
                     type: 'success'
@@ -405,6 +424,13 @@
                         }
                     }
                     that.updateData();
+                    if (that.historyList.length > that.historyMax) {
+                        that.historyList.pop();
+                    }
+                    that.request.value = that.request.value ? that.request.value : that.request.url;
+                    that.historyList.unshift(that.request);
+                    console.log(that.historyList);
+                    localStorage.setItem('history', JSON.stringify(that.historyList));
                     axios.post('api.php', that.request)
                         .then(function(response) {
                             that.loading = false;
@@ -432,11 +458,19 @@
                 } else {
                     //走本地
                     var request = JSON.parse(JSON.stringify(that.request));
+                    var historyItem = request;
                     request.url = request.url.replace(that.urlList.local, that.urlList.online);
                     axios.post('api.php?local=1', request)
                         .then(function(response) {
                             if (response.data.code == 200) {
                                 var key = response.data.data;
+                                historyItem.key = key;
+                                if (that.historyList.length > that.historyMax) {
+                                    that.historyList.pop();
+                                }
+                                that.request.value = that.request.value ? that.request.value : that.request.url;
+                                that.historyList.unshift(historyItem);
+                                localStorage.setItem('history', JSON.stringify(that.historyList));
                                 switch (that.request.method) {
                                     case 'POST':
                                         axios.post(that.request.url, that.request.body, {
@@ -550,9 +584,9 @@
             //解析本地版本返回的数据
             decodeResponseDataLocal(response) {
                 var that = this;
-                if(response.body.length>that.maxResponseLength){
+                if (response.body.length > that.maxResponseLength) {
                     that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                }else{
+                } else {
                     try {
                         if (typeof(response.body) == "object") {
                             that.response.body = unescape(that.JsonFormat(response.body));
@@ -575,7 +609,7 @@
                     that.response.header = that.html2Escape(response.header);
                 }
                 that.response.httpcode = response.http_code;
-                
+
                 location.href = "/#/" + response.key;
 
                 that.response.markdown = '';
@@ -669,9 +703,9 @@
             //解析在线版本返回的数据
             decodeResponseDataOnline(response) {
                 var that = this;
-                if(response.data.data.body.length>that.maxResponseLength){
+                if (response.data.data.body.length > that.maxResponseLength) {
                     that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                }else{
+                } else {
                     try {
                         that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
                     } catch (error) {
