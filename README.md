@@ -20,7 +20,7 @@
 
 #### 项目说明
 
-一个轻量在线API接口调试工具，支持自定义Header，自定义Cookies，支持GET/POST/PUT/DELETE/PATCH/TRACE/OPTIONS等请求方式，支持快速生成Markdown接口文档，支持分享当前请求链接等
+一个轻量在线API接口调试工具，支持自定义Header，自定义Cookies，支持GET/POST/PUT/DELETE/PATCH/TRACE/OPTIONS等请求方式，支持快速生成Markdown接口文档，支持分享当前请求链接等，支持配置生产和测试不同的域名并自动切换和生成简单的测试用例。
 
 #### 在线体验
 
