@@ -322,6 +322,8 @@
         methods: {
             handleSelect(item) {
                 this.request = item;
+                console.log(item.url)
+                console.log(item);
             },
             querySearch(queryString, cb) {
                 //设置历史
@@ -410,6 +412,13 @@
                 if (that.request.url.indexOf('http://') == -1 && that.request.url.indexOf('https://') == -1) {
                     that.request.url = "http://" + that.request.url;
                 }
+                var historyItem = JSON.parse(JSON.stringify(that.request));
+                historyItem.value = historyItem.url;
+                if (that.historyList.length > that.historyMax) {
+                    that.historyList.pop();
+                }
+                that.historyList.unshift(historyItem);
+                localStorage.setItem('history', JSON.stringify(that.historyList));
                 if (that.nowType == "线上版") {
                     var arr = that.request.header.split('\n');
                     that.factory.header = {};
@@ -424,13 +433,6 @@
                         }
                     }
                     that.updateData();
-                    if (that.historyList.length > that.historyMax) {
-                        that.historyList.pop();
-                    }
-                    that.request.value = that.request.value ? that.request.value : that.request.url;
-                    that.historyList.unshift(that.request);
-                    console.log(that.historyList);
-                    localStorage.setItem('history', JSON.stringify(that.historyList));
                     axios.post('api.php', that.request)
                         .then(function(response) {
                             that.loading = false;
@@ -468,7 +470,6 @@
                                 if (that.historyList.length > that.historyMax) {
                                     that.historyList.pop();
                                 }
-                                that.request.value = that.request.value ? that.request.value : that.request.url;
                                 that.historyList.unshift(historyItem);
                                 localStorage.setItem('history', JSON.stringify(that.historyList));
                                 switch (that.request.method) {
