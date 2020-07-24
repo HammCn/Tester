@@ -140,6 +140,13 @@
         .input-with-select {
             display: block;
         }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        
+        input[type="number"]{
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 
@@ -152,7 +159,7 @@
                 </a>
                 <span style="float:right;margin-bottom:10px;" class="no-select">
                     <el-link type="primary" href="https://gitee.com/hamm/tester/attach_files" target="_blank">下载客户端</el-link>
-                    <el-link type="primary" href="javascript:;" @click.native="dialogForSetting=true">环境变量</el-link>
+                    <el-link type="primary" href="javascript:;" @click.native="dialogForSetting=true">系统设置</el-link>
                     <el-link type="primary" href="https://gitee.com/hamm/tester/blob/master/README.md" target="_blank">配置教程</el-link>
                     <el-link type="primary" href="https://gitee.com/hamm/tester" target="_blank">开源地址</el-link>
                 </span>
@@ -209,14 +216,17 @@
         <!-- 环境设置框 -->
         <el-dialog title="环境设置" :visible.sync="dialogForSetting" :modal-append-to-body='false'>
             <el-form status-icon>
+            <div class="tips">生成测试用例时会将本地地址替换为线上地址，切换调试环境时将会自动切换</div>
                 <el-form-item label="在线地址" label-width="80px">
                     <el-input size="medium" autocomplete="off" v-model="urlList.online" placeholder="在线域名 如https://tester.hamm.cn/"></el-input>
                 </el-form-item>
                 <el-form-item label="本地地址" label-width="80px">
                     <el-input size="medium" autocomplete="off" v-model="urlList.local" placeholder="本地域名 如http://127.0.0.1/"></el-input>
                 </el-form-item>
+                <el-form-item label="输出长度" label-width="80px">
+                    <el-input size="medium" autocomplete="off" v-model="maxResponseLength" type="number" placeholder="请输入允许输出的最大字符长度"></el-input>
+                </el-form-item>
             </el-form>
-            <div class="tips">生成测试用例时会将本地地址替换为线上地址<br>切换调试环境时将会为你自动切换请求地址</div>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveUrlList">配置完成</el-button>
             </div>
@@ -233,7 +243,7 @@
         el: '#app',
         data() {
             return {
-                maxResponseLength: 10240,
+                maxResponseLength: 102400,
                 loading: false,
                 urlList: {
                     online: "",
@@ -250,10 +260,10 @@
                     value: "",
                 },
                 response: {
-                    body: "",
-                    detail: "",
-                    header: "",
-                    markdown: ""
+                    body: "欢迎使用Tester轻量API测试工具",
+                    detail: "欢迎使用Tester轻量API测试工具",
+                    header: "欢迎使用Tester轻量API测试工具",
+                    markdown: "欢迎使用Tester轻量API测试工具"
                 },
                 historyMax: 100, //最大历史
                 historyList: [], //历史
