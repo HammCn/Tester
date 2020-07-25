@@ -657,7 +657,7 @@
                                 var item = arr[index].split('=');
                                 if (item.length == 2) {
                                     var type = typeof(item[1]);
-                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
+                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|-|\n';
                                 }
                             }
                             if (arr.length == 0 || arr.length == 1 && !arr[0]) {
@@ -751,11 +751,11 @@
                         case 'application/json;':
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|说明|\n';
+                                that.response.markdown += '|字段|类型|必填|示例|说明|\n';
                                 that.response.markdown += '|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
-                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '\n示例JSON：\n\n';
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
@@ -770,7 +770,7 @@
                                 var item = arr[index].split('=');
                                 if (item.length == 2) {
                                     var type = typeof(item[1]);
-                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|暂无备注|\n';
+                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|-|\n';
                                 }
                             }
                             if (arr.length == 0 || arr.length == 1 && !arr[0]) {
@@ -787,11 +787,11 @@
                         default:
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|说明|\n';
+                                that.response.markdown += '|字段|类型|必填|示例|说明|\n';
                                 that.response.markdown += '|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
-                                that.response.markdown += '\n示例请求参数：\n\n';
+                                that.response.markdown += '\n示例JSON：\n\n';
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
@@ -833,13 +833,13 @@
                             var type = typeof(obj[key]);
                             if (type == 'object') {
                                 if (obj[key] instanceof Array) {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|暂无备注|\n';
+                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".", true);
                                 } else if (obj[key] instanceof Object) {
-                                    // _markdown += '|' + prefix + key + '|object|是|{}|暂无备注|\n';
+                                    // _markdown += '|' + prefix + key + '|object|是|{}|-|\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix);
                                 } else {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|暂无备注|\n';
+                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
                                 }
                             }
                             break;
@@ -852,16 +852,16 @@
                             }
                             if (type == 'object') {
                                 if (obj[key] instanceof Array) {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|暂无备注|\n';
+                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".", true);
                                 } else if (obj[key] instanceof Object) {
-                                    _markdown += '|' + prefix + key + '|object|是|{}|暂无备注|\n';
+                                    _markdown += '|' + prefix + key + '|object|是|{}|-|\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".");
                                 } else {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|暂无备注|\n';
+                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
                                 }
                             } else {
-                                _markdown += '|' + prefix + key + '|' + type + '|是|' + obj[key] + '|暂无备注|\n';
+                                _markdown += '|' + prefix + key + '|' + type + '|是|' + obj[key] + '|-|\n';
                             }
                         }
                     }
