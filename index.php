@@ -646,7 +646,7 @@
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
-                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                                that.response.markdown += '> ' + that.request.body + '\n\n';
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
@@ -665,8 +665,8 @@
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
                             try {
-                                that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
-                                    '\n```\n\n';
+                                that.response.markdown += '> \n' + that.JsonFormat(JSON.parse(that.request.body)) +
+                                    '\n\n';
                             } catch (error) {
                                 that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
                             }
@@ -683,7 +683,7 @@
                                     '\n```\n\n';
                             } catch (error) {
                                 that.response.markdown += '\n示例请求参数：\n\n';
-                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                                that.response.markdown += '> ' + that.request.body + '\n\n';
                             }
                     }
                 } else {
@@ -698,7 +698,7 @@
                 }
                 that.response.markdown += '#### 五、返回数据\n\n';
                 try {
-                    that.response.markdown += '|字段|类型|固定返回|示例值|说明|\n';
+                    that.response.markdown += '|字段|类型|固定|示例值|说明|\n';
                     that.response.markdown += '|-|-|-|-|-|\n';
                     var obj = JSON.parse(that.response.body);
                     that.response.markdown += that.getJsonMarkdown(obj);
@@ -759,7 +759,7 @@
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
-                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                                that.response.markdown += '> ' + that.request.body + '\n\n';
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
@@ -781,7 +781,7 @@
                                 that.response.markdown += '```\n' + that.JsonFormat(JSON.parse(that.request.body)) +
                                     '\n```\n\n';
                             } catch (error) {
-                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                                that.response.markdown += '> ' + that.request.body + '\n\n';
                             }
                             break;
                         default:
@@ -796,7 +796,7 @@
                                     '\n```\n\n';
                             } catch (error) {
                                 that.response.markdown += '\n示例请求参数：\n\n';
-                                that.response.markdown += '```\n' + that.request.body + '\n```\n\n';
+                                that.response.markdown += '> ' + that.request.body + '\n\n';
                             }
                     }
                 } else {
@@ -811,7 +811,7 @@
                 }
                 that.response.markdown += '#### 五、返回数据\n\n';
                 try {
-                    that.response.markdown += '|字段|类型|固定返回|示例值|说明|\n';
+                    that.response.markdown += '|字段|类型|固定|示例值|说明|\n';
                     that.response.markdown += '|-|-|-|-|-|\n';
                     var obj = JSON.parse(that.response.body);
                     that.response.markdown += that.getJsonMarkdown(obj);
