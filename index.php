@@ -752,7 +752,7 @@
                             try {
                                 var obj = JSON.parse(that.request.body);
                                 that.response.markdown += '|字段|类型|必填|示例|说明|\n';
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|-|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例JSON：\n\n';
@@ -788,7 +788,7 @@
                             try {
                                 var obj = JSON.parse(that.request.body);
                                 that.response.markdown += '|字段|类型|必填|示例|说明|\n';
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|-|-|-|-|-|\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例JSON：\n\n';
