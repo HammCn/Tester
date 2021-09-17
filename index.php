@@ -147,6 +147,16 @@
         input[type="number"]{
             -moz-appearance: textfield;
         }
+        .preview{
+            padding: 0;
+            margin:-15px;
+        }
+        .preview iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        
     </style>
 </head>
 
@@ -183,24 +193,25 @@
                 <br>
                 <el-tabs type="border-card" v-model="factory.requestActive">
                     <el-tab-pane label="Body" name="Body">
-                        <el-input type="textarea" rows="8" class="data" placeholder="a=b&c=d&#10;&#10;{'a':'b','c':'d'}&#10;&#10;xml" v-model="request.body"></el-input>
+                        <el-input type="textarea" rows="5" class="data" placeholder="a=b&c=d&#10;&#10;{'a':'b','c':'d'}&#10;&#10;xml" v-model="request.body"></el-input>
                     </el-tab-pane>
                     <el-tab-pane label="Header" name="Header">
-                        <el-input type="textarea" rows="8" class="data" placeholder="content-type: application/json;&#10;User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36" v-model="request.header"></el-input>
+                        <el-input type="textarea" rows="5" class="data" placeholder="User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36" v-model="request.header"></el-input>
                     </el-tab-pane>
                     <el-tab-pane label="Cookie" name="Cookie">
-                        <el-input type="textarea" rows="8" class="data" v-model="request.cookie" placeholder="access_token=abcdefghijklmnopqrstuvwxyz;&#10;可直接复制Chrome控制台Set-Cookie的内容"></el-input>
+                        <el-input type="textarea" rows="5" class="data" v-model="request.cookie" placeholder="access_token=abcdefghijklmnopqrstuvwxyz;&#10;可直接复制Chrome控制台Set-Cookie的内容"></el-input>
                     </el-tab-pane>
                 </el-tabs>
                 <br>
                 <el-tabs type="border-card">
                     <el-tab-pane label="Body">
                         <pre v-html="response.body"></pre>
-
+                    </el-tab-pane>
+                    <el-tab-pane label="Preview" class="preview">
+                        <iframe :srcdoc="escape2Html(response.body)"></iframe>
                     </el-tab-pane>
                     <el-tab-pane label="header">
                         <pre v-html="response.header"></pre>
-
                     </el-tab-pane>
                     <el-tab-pane label="Detail">
                         <pre v-html="response.detail"></pre>
@@ -223,9 +234,6 @@
                 <el-form-item label="本地地址" label-width="80px">
                     <el-input size="medium" autocomplete="off" v-model="urlList.local" placeholder="本地域名 如http://127.0.0.1/"></el-input>
                 </el-form-item>
-                <el-form-item label="输出长度" label-width="80px">
-                    <el-input size="medium" autocomplete="off" v-model="maxResponseLength" type="number" placeholder="请输入允许输出的最大字符长度"></el-input>
-                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveUrlList">配置完成</el-button>
@@ -243,7 +251,6 @@
         el: '#app',
         data() {
             return {
-                maxResponseLength: 102400,
                 loading: false,
                 urlList: {
                     online: "",
@@ -258,6 +265,7 @@
                     header: "",
                     cookie: "",
                     value: "",
+                    contentType:""
                 },
                 response: {
                     body: "欢迎使用Tester轻量API测试工具",
@@ -270,7 +278,6 @@
                 factory: {
                     requestActive: "Body",
                     header: {
-                        'Content-Type': 'application/x-www-form-urlencoded;',
                     },
                     contentType: 'application/x-www-form-urlencoded;',
                     contentTypeList: [{
@@ -323,6 +330,7 @@
             } catch (e) {
                 this.historyList = [];
             }
+            this.request.contentType = this.factory.contentType;
         },
         updated() {
             document.querySelectorAll('pre').forEach(function(block) {
@@ -332,8 +340,6 @@
         methods: {
             handleSelect(item) {
                 this.request = item;
-                console.log(item.url)
-                console.log(item);
             },
             querySearch(queryString, cb) {
                 //设置历史
@@ -366,11 +372,10 @@
                 }
             },
             contentTypeChanged() {
-                this.factory.requestActive = 'Header';
+                // this.factory.requestActive = 'Header';
                 this.updateData();
             },
             updateData() {
-                this.factory.header['Content-Type'] = this.factory.contentType;
                 var headerStr = '';
                 for (var key in this.factory.header) {
                     headerStr += key + ":" + this.factory.header[key] + "\n";
@@ -392,15 +397,13 @@
                                 that.request.method = obj.method;
                                 that.request.body = obj.body;
                                 that.request.cookie = obj.cookie;
+                                that.request.contentType = that.factory.contentType = obj.contentType;
                                 that.factory.header = {};
                                 for (let index in obj.header) {
                                     var match = obj.header[index].match(/(.*?):/);
                                     if (match) {
                                         var value = obj.header[index].replace(match[0], '');
                                         that.factory.header[match[1]] = value;
-                                        if (match[1].toLowerCase() == 'content-type') {
-                                            that.factory.contentType = value;
-                                        }
                                     }
                                 }
                                 that.updateData();
@@ -429,6 +432,8 @@
                 }
                 that.historyList.unshift(historyItem);
                 localStorage.setItem('history', JSON.stringify(that.historyList));
+                
+                this.request.contentType = this.factory.contentType;
                 if (that.nowType == "线上版") {
                     var arr = that.request.header.split('\n');
                     that.factory.header = {};
@@ -437,9 +442,6 @@
                         if (match) {
                             var value = arr[index].replace(match[0], '');
                             that.factory.header[match[1]] = value;
-                            if (match[1].toLowerCase() == 'content-type') {
-                                that.factory.contentType = value;
-                            }
                         }
                     }
                     that.updateData();
@@ -482,105 +484,77 @@
                                 }
                                 that.historyList.unshift(historyItem);
                                 localStorage.setItem('history', JSON.stringify(that.historyList));
+                                let headerStr = that.request.header.toString();
+                                headerStr += 'Content-Type: ' + that.request.contentType+"\n";
+                                let headerArr = headerStr.split("\n");
+                                let newHeaders = {};
+                                for(let item of headerArr){
+                                    if(item){
+                                        let tempArr = item.split(":");
+                                        if(tempArr.length==2){
+                                            newHeaders[tempArr[0].toLowerCase()] = tempArr[1].replace(";","");
+                                        }
+                                    }
+                                }
+                                console.log(newHeaders)
+                                let axiosResource = false;
                                 switch (that.request.method) {
                                     case 'POST':
-                                        axios.post(that.request.url, that.request.body, {
-                                                headers: that.request.headers
-                                            })
-                                            .then(function(response) {
-                                                that.loading = false;
-                                                if (!response.headers) {
-                                                    that.$message.error("请求超时，请稍候重试！");
-                                                    return;
-                                                }
-                                                that.$message({
-                                                    message: '请求成功',
-                                                    type: 'success'
-                                                });
-                                                var resp = {
-                                                    header: response.headers,
-                                                    body: response.data,
-                                                    http_code: 200,
-                                                    detail: response,
-                                                    key: key
-                                                };
-                                                that.decodeResponseDataLocal(resp);
-                                            })
-                                            .
-                                        catch(function(error) {
-                                            that.loading = false;
-                                            if (error.response) {
-                                                var resp = {
-                                                    header: error.response.headers,
-                                                    body: error.response.data,
-                                                    http_code: error.response.status,
-                                                    detail: error.response,
-                                                    key: key
-                                                };
-                                                that.decodeResponseDataLocal(resp);
-                                            } else if (error.request) {
-                                                console.log(error.request);
-                                                console.log(error.message);
-                                                if (error.message == 'timeout of 10000ms exceeded') {
-                                                    that.$message.error("请求API接口网络超时！");
-                                                } else {
-                                                    that.$message.error("本地测试请先配置允许跨域和安全访问！");
-                                                }
-                                            } else {
-                                                that.$message.error(error.message);
-                                            }
-                                        });
+                                        axiosResource = axios.post(that.request.url, that.request.body, {
+                                                headers: newHeaders
+                                            });
                                         break;
                                     case 'GET':
-                                        axios.get(that.request.url, {
-                                                headers: that.request.headers
-                                            })
-                                            .then(function(response) {
-                                                that.loading = false;
-                                                if (!response.headers) {
-                                                    that.$message.error("请求超时，请稍候重试！");
-                                                    return;
-                                                }
-                                                that.$message({
-                                                    message: '请求成功',
-                                                    type: 'success'
-                                                });
-                                                var resp = {
-                                                    header: response.headers,
-                                                    body: response.data,
-                                                    http_code: 200,
-                                                    detail: response,
-                                                    key: key
-                                                };
-                                                that.decodeResponseDataLocal(resp);
-                                            })
-                                            .
-                                        catch(function(error) {
-                                            that.loading = false;
-                                            if (error.response) {
-                                                var resp = {
-                                                    header: error.response.headers,
-                                                    body: error.response.data,
-                                                    http_code: error.response.status,
-                                                    detail: error.response,
-                                                    key: key
-                                                };
-                                                that.decodeResponseDataLocal(resp);
-                                            } else if (error.request) {
-                                                console.log(error.request);
-                                                console.log(error.message);
-                                                if (error.message == 'timeout of 10000ms exceeded') {
-                                                    that.$message.error("请求API接口网络超时！");
-                                                } else {
-                                                    that.$message.error("本地测试请先配置允许跨域和安全访问！");
-                                                }
-                                            } else {
-                                                that.$message.error(error.message);
-                                            }
-                                        });
+                                        axiosResource = axios.get(that.request.url, {
+                                                headers: newHeaders
+                                            });
                                         break;
                                     default:
                                 }
+                                
+                            axiosResource.then(function(response) {
+                                    that.loading = false;
+                                        if (!response.headers) {
+                                            that.$message.error("请求超时，请稍候重试！");
+                                            return;
+                                        }
+                                        that.$message({
+                                            message: '请求成功',
+                                            type: 'success'
+                                        });
+                                        var resp = {
+                                            header: response.headers,
+                                            body: response.data,
+                                            http_code: 200,
+                                            detail: response,
+                                            key: key
+                                        };
+                                        that.decodeResponseDataLocal(resp);
+                                    })
+                                    .
+                                catch(function(error) {
+                                    that.loading = false;
+                                    if (error.response) {
+                                        var resp = {
+                                            header: error.response.headers,
+                                            body: error.response.data,
+                                            http_code: error.response.status,
+                                            detail: error.response,
+                                            key: key
+                                        };
+                                        that.decodeResponseDataLocal(resp);
+                                    } else if (error.request) {
+                                        console.log(error.request);
+                                        console.log(error.message);
+                                        if (error.message == 'timeout of 10000ms exceeded') {
+                                            that.$message.error("请求API接口网络超时！");
+                                        } else {
+                                            that.$message.error("本地测试请先配置允许跨域和安全访问！");
+                                        }
+                                    } else {
+                                        that.$message.error(error.message);
+                                    }
+                                });
                             } else {
                                 that.$message.error(response.data.msg);
                             }
@@ -595,18 +569,14 @@
             //解析本地版本返回的数据
             decodeResponseDataLocal(response) {
                 var that = this;
-                if (response.body.length > that.maxResponseLength) {
-                    that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                } else {
-                    try {
-                        if (typeof(response.body) == "object") {
-                            that.response.body = unescape(that.JsonFormat(response.body));
-                        } else {
-                            that.response.body = that.JsonFormat(JSON.parse(response.body));
-                        }
-                    } catch (error) {
-                        that.response.body = that.html2Escape(response.body);
+                try {
+                    if (typeof(response.body) == "object") {
+                        that.response.body = unescape(that.JsonFormat(response.body));
+                    } else {
+                        that.response.body = that.JsonFormat(JSON.parse(response.body));
                     }
+                } catch (error) {
+                    that.response.body = that.html2Escape(response.body);
                 }
                 delete response.detail.data;
                 try {
@@ -714,14 +684,10 @@
             //解析在线版本返回的数据
             decodeResponseDataOnline(response) {
                 var that = this;
-                if (response.data.data.body.length > that.maxResponseLength) {
-                    that.response.body = '返回文本超长，为了Tester的性能考虑，这里不予显示。';
-                } else {
-                    try {
-                        that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
-                    } catch (error) {
-                        that.response.body = that.html2Escape(response.data.data.body);
-                    }
+                try {
+                    that.response.body = unescape(that.JsonFormat(JSON.parse(response.data.data.body)))
+                } catch (error) {
+                    that.response.body = that.html2Escape(response.data.data.body);
                 }
                 try {
                     that.response.detail = unescape(that.JsonFormat(response.data.data.detail))

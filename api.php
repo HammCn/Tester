@@ -12,8 +12,8 @@ if (isset($_GET['key'])) {
     die;
 }
 
-$post = file_get_contents('php://input');
-$post = json_decode($post, true);
+$postStr = file_get_contents('php://input');
+$post = json_decode($postStr, true);
 if (!$post) {
     jerr('参数错误');
 }
@@ -25,12 +25,17 @@ $method = $post['method'] ?? 'GET';
 $body = $post['body'] ?? "";
 $header = $post['header'] ?? "";
 $cookie = $post['cookie'] ?? "";
+$contentType = $post['contentType'] ?? "application/json;";
 
 if (substr($header, 0 - strlen(PHP_EOL)) == PHP_EOL) {
     $header = substr($header, 0, strlen($header) - strlen(PHP_EOL));
 }
-$header = explode(PHP_EOL, $header);
-$key = sha1(time() . rand(10000000, 99999999));
+if($header){
+    $header = explode(PHP_EOL, $header);
+}else{
+    $header = [];
+}
+$key = sha1($postStr);
 $dir = "./data/" . date('Ymd');
 if (!is_dir($dir)) {
     mkdir($dir);
@@ -40,14 +45,28 @@ file_put_contents($dir . "/" . $key . ".php", json_encode([
     "body" => $body,
     "header" => $header,
     "cookie" => $cookie,
-    "method" => $method
+    "method" => $method,
+    "contentType" => $contentType,
 ]));
 if (isset($_GET['local'])) {
     return jok('', date('Ymd') . "/" . $key);
 }
 
+for($i=0;$i<count($header);$i++){
+    if(empty($header)){
+        array_splice($header,$i);
+    }
+}
 
-
+switch($contentType){
+    case 'application/json;':
+        $body = json_encode(json_decode($body,true));
+        $contentType = 'application/json;charset=utf-8';
+        break;
+    default;
+}
+$header[] = 'Content-Type: '.$contentType;
+$header[] = 'Content-Length: ' . strlen($body);
 $result = curlHelper($url, $body, $header, $cookie, $method);
 
 $result['key'] = date('Ymd') . "/" . $key;
