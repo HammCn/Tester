@@ -25,7 +25,7 @@ $method = $post['method'] ?? 'GET';
 $body = $post['body'] ?? "";
 $header = $post['header'] ?? "";
 $cookie = $post['cookie'] ?? "";
-$contentType = $post['contentType'] ?? "application/json;";
+$contentType = $post['contentType'] ?? "application/json; charset=utf-8";
 
 if (substr($header, 0 - strlen(PHP_EOL)) == PHP_EOL) {
     $header = substr($header, 0, strlen($header) - strlen(PHP_EOL));
@@ -60,13 +60,18 @@ for($i=0;$i<count($header);$i++){
 
 switch($contentType){
     case 'application/json;':
-        $body = json_encode(json_decode($body,true));
-        $contentType = 'application/json;charset=utf-8';
+        if($body){
+            $body = json_encode(json_decode($body,true));
+        }else{
+            $body = '{}';
+        }
+        $contentType = 'application/json; charset=utf-8';
         break;
     default;
 }
 $header[] = 'Content-Type: '.$contentType;
 $header[] = 'Content-Length: ' . strlen($body);
+
 $result = curlHelper($url, $body, $header, $cookie, $method);
 
 $result['key'] = date('Ymd') . "/" . $key;
