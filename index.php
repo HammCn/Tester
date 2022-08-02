@@ -193,13 +193,13 @@
                 <br>
                 <el-tabs type="border-card" v-model="factory.requestActive">
                     <el-tab-pane label="Body" name="Body">
-                        <el-input type="textarea" rows="5" class="data" placeholder="a=b&c=d&#10;&#10;{'a':'b','c':'d'}&#10;&#10;xml" v-model="request.body"></el-input>
+                        <el-input type="textarea" rows="5" class="data" placeholder="a=b&c=d&#10;&#10;{'a':'b','c':'d'}&#10;&#10;xml" v-model="request.body"  :autosize="{ minRows: 2, maxRows: 30}"></el-input>
                     </el-tab-pane>
                     <el-tab-pane label="Header" name="Header">
-                        <el-input type="textarea" rows="5" class="data" placeholder="User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36" v-model="request.header"></el-input>
+                        <el-input type="textarea" rows="5" class="data" placeholder="User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36" v-model="request.header"  :autosize="{ minRows: 2, maxRows: 30}"></el-input>
                     </el-tab-pane>
                     <el-tab-pane label="Cookie" name="Cookie">
-                        <el-input type="textarea" rows="5" class="data" v-model="request.cookie" placeholder="access_token=abcdefghijklmnopqrstuvwxyz;&#10;可直接复制Chrome控制台Set-Cookie的内容"></el-input>
+                        <el-input type="textarea" rows="5" class="data" v-model="request.cookie" placeholder="access_token=abcdefghijklmnopqrstuvwxyz;&#10;可直接复制Chrome控制台Set-Cookie的内容" :autosize="{ minRows: 2, maxRows: 30}"></el-input>
                     </el-tab-pane>
                 </el-tabs>
                 <br>
@@ -218,7 +218,7 @@
 
                     </el-tab-pane>
                     <el-tab-pane label="MarkDown">
-                        <el-link type="primary" href="https://md.hamm.cn" target="_blank" style="float:right;margin-bottom:10px;">MarkDown编辑器</el-link>
+                        <el-link type="primary" href="https://markdowneditor.cn/" target="_blank" style="float:right;margin-bottom:10px;">MarkDown编辑器</el-link>
                         <el-input type="textarea" autosize placeholder="文档读取中" v-model="response.markdown"></el-input>
                     </el-tab-pane>
                 </el-tabs>
@@ -444,8 +444,9 @@
                             that.factory.header[match[1]] = value;
                         }
                     }
+                    console.log(that.factory.header)
                     that.updateData();
-                    axios.post('api.php', that.request)
+                    axios.post('api.php', that.request,that.factory.header)
                         .then(function(response) {
                             that.loading = false;
                             if (response.data.code == 200) {
@@ -608,8 +609,8 @@
                         case 'application/json;':
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|说明|\n';
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|  字段  |  类型  |  必填  |  说明  |\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例请求参数：\n\n';
@@ -620,18 +621,18 @@
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
-                            that.response.markdown += '|字段|类型|必填|说明|\n';
-                            that.response.markdown += '|-|-|-|-|\n';
+                            that.response.markdown += '|  字段  |  类型  |  必填  |  说明  |\n';
+                            that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                             var arr = that.request.body.split('&');
                             for (var index in arr) {
                                 var item = arr[index].split('=');
                                 if (item.length == 2) {
                                     var type = typeof(item[1]);
-                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|-|\n';
+                                    that.response.markdown += '  |  ' + item[0] + '  |  ' + type + '  |  是  |  -  |\n';
                                 }
                             }
                             if (arr.length == 0 || arr.length == 1 && !arr[0]) {
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
                             try {
@@ -644,8 +645,8 @@
                         default:
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|说明|\n';
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|  字段  |  类型  |  必填  |  说明  |\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例请求参数：\n\n';
@@ -668,8 +669,8 @@
                 }
                 that.response.markdown += '#### 五、返回数据\n\n';
                 try {
-                    that.response.markdown += '|字段|类型|固定|示例值|说明|\n';
-                    that.response.markdown += '|-|-|-|-|-|\n';
+                    that.response.markdown += '|  字段  |  类型  |  固定  |  示例值  |  说明  |\n';
+                    that.response.markdown += '|  -  |  -  |  -  |  -  |  -  |\n';
                     var obj = JSON.parse(that.response.body);
                     that.response.markdown += that.getJsonMarkdown(obj);
                 } catch (error) {
@@ -717,8 +718,8 @@
                         case 'application/json;':
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|示例|说明|\n';
-                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += '|  字段  |  类型  |  必填  |  示例  |  说明  |\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |  -  |\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例JSON：\n\n';
@@ -729,18 +730,18 @@
                             }
                             break;
                         case 'application/x-www-form-urlencoded;':
-                            that.response.markdown += '|字段|类型|必填|说明|\n';
-                            that.response.markdown += '|-|-|-|-|\n';
+                            that.response.markdown += '|  字段  |  类型  |  必填  |  说明  |\n';
+                            that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                             var arr = that.request.body.split('&');
                             for (var index in arr) {
                                 var item = arr[index].split('=');
                                 if (item.length == 2) {
                                     var type = typeof(item[1]);
-                                    that.response.markdown += '|' + item[0] + '|' + type + '|是|-|\n';
+                                    that.response.markdown += '  |  ' + item[0] + '  |  ' + type + '  |  是  |  -  |\n';
                                 }
                             }
                             if (arr.length == 0 || arr.length == 1 && !arr[0]) {
-                                that.response.markdown += '|-|-|-|-|\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |\n';
                             }
                             that.response.markdown += '\n示例请求参数：\n\n';
                             try {
@@ -753,8 +754,8 @@
                         default:
                             try {
                                 var obj = JSON.parse(that.request.body);
-                                that.response.markdown += '|字段|类型|必填|示例|说明|\n';
-                                that.response.markdown += '|-|-|-|-|-|\n';
+                                that.response.markdown += '|  字段  |  类型  |  必填  |  示例  |  说明  |\n';
+                                that.response.markdown += '|  -  |  -  |  -  |  -  |  -  |\n';
                                 that.response.markdown += that.getJsonMarkdown(obj);
 
                                 that.response.markdown += '\n示例JSON：\n\n';
@@ -777,8 +778,8 @@
                 }
                 that.response.markdown += '#### 五、返回数据\n\n';
                 try {
-                    that.response.markdown += '|字段|类型|固定|示例值|说明|\n';
-                    that.response.markdown += '|-|-|-|-|-|\n';
+                    that.response.markdown += '|  字段  |  类型  |  固定  |  示例值  |  说明  |\n';
+                    that.response.markdown += '|  -  |  -  |  -  |  -  |  -  |\n';
                     var obj = JSON.parse(that.response.body);
                     that.response.markdown += that.getJsonMarkdown(obj);
                 } catch (error) {
@@ -799,13 +800,13 @@
                             var type = typeof(obj[key]);
                             if (type == 'object') {
                                 if (obj[key] instanceof Array) {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
+                                    _markdown += '|  ' + prefix + key + '  |  array  |  是  |  []  |  -  |\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".", true);
                                 } else if (obj[key] instanceof Object) {
                                     // _markdown += '|' + prefix + key + '|object|是|{}|-|\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix);
                                 } else {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
+                                    _markdown += '|  ' + prefix + key + '  |  array  |  是  |  []  |  -  |\n';
                                 }
                             }
                             break;
@@ -818,16 +819,16 @@
                             }
                             if (type == 'object') {
                                 if (obj[key] instanceof Array) {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
+                                    _markdown += '|  ' + prefix + key + '  |  array  |  是  |  []  |  -  |\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".", true);
                                 } else if (obj[key] instanceof Object) {
-                                    _markdown += '|' + prefix + key + '|object|是|{}|-|\n';
+                                    _markdown += '|  ' + prefix + key + '  |  object  |  是  |  {}  |  -  |\n';
                                     _markdown += that.getJsonMarkdown(obj[key], prefix + key + ".");
                                 } else {
-                                    _markdown += '|' + prefix + key + '|array|是|[]|-|\n';
+                                    _markdown += '|  ' + prefix + key + '  |  array  |  是  |  []  |  -  |\n';
                                 }
                             } else {
-                                _markdown += '|' + prefix + key + '|' + type + '|是|' + obj[key] + '|-|\n';
+                                _markdown += '|  ' + prefix + key + '  |  ' + type + '  |  是  |  ' + obj[key] + '  |  -  |\n';
                             }
                         }
                     }
